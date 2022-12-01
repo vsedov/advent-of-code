@@ -1,0 +1,13 @@
+updates:
+
+  # Check for GitHub Actions upgrades
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+
+  # Check for Python dependency upgrades
+  - package-ecosystem: "poetry"
+    directory: "/"
+    schedule:
+      interval: "daily"
