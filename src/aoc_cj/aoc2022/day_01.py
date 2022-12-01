@@ -23,4 +23,4 @@ def main(txt: str) -> None:
 if __name__ == "__main__":
     from aocd import data
 
-    main(data)
+    solve("Calorie Counting", 2022, 1, data)
