@@ -23,13 +23,14 @@ def solve(year: int, day: int, data: str) -> tuple[Answer, Answer]:
     ans_b: Answer = None
 
     try:
-        module = importlib.import_module(f"{__name__}.aoc{year}.day{day:02d}")
+        module = importlib.import_module(f"{__name__}.aoc{year}.day_{day:02d}")
 
         def solve_part(part: Literal["a", "b"]) -> Answer:
-            if f := getattr(module, f"part{part}", None):
+            if f := getattr(module, f"part_{part}", None):
                 assert inspect.isfunction(f)
-                # TODO: consider checking inspect.signature
+
                 resp = f(data)
+                print(resp)
                 assert resp is None or isinstance(resp, (int, str))
                 return resp
             return None
