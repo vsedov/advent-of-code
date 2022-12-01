@@ -1,6 +1,6 @@
 [[package]]
 name = "advent-of-code-data"
-version = "1.2.2"
+version = "1.2.3"
 description = "Get your puzzle data with a single import"
 category = "main"
 optional = false
