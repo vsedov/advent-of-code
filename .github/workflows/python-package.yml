@@ -38,5 +38,5 @@ jobs:
       - name: Test
         run: poetry run pytest --cov=./ --cov-report=xml
 
-      - name: Upload Coverage to Codecov
-        uses: codecov/codecov-action@v3
+      - name: Codecov
+        uses: codecov/codecov-action@v3.1.1
