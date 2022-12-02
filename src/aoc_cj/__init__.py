@@ -13,7 +13,6 @@ LOGS_DIR.mkdir(exist_ok=True)
 
 Answer = Optional[Union[int, str]]
 
-
 logging.basicConfig(
     filename=LOGS_DIR / "aoc_cj.log",
     level=logging.DEBUG,
