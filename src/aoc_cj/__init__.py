@@ -41,22 +41,18 @@ def solve(name: str, year: int, day: int, data: str) -> tuple[Answer, Answer]:
         ans_a = solve_part("a")
         ans_b = solve_part("b")
 
-        test_module = importlib.import_module(f"tests.aoc{year}.{year}_day_{day:02d}_test")
-        test_pass = (False, False)
-        if f := getattr(test_module, "test_a", None):
-            assert inspect.isfunction(f)
-            try:
-                f()
-                test_pass = (True, test_pass[1])
-            except AssertionError:
-                test_pass = (False, test_pass[1])
-        if f := getattr(test_module, "test_b", None):
-            assert inspect.isfunction(f)
-            try:
-                f()
-                test_pass = (test_pass[0], True)
-            except AssertionError:
-                test_pass = (test_pass[0], False)
+        def test_part(part: Literal["a", "b"]) -> bool:
+            test_module = importlib.import_module(f"tests.aoc{year}.{year}_day_{day:02d}_test")
+            if f := getattr(test_module, f"test_{part}", None):
+                assert inspect.isfunction(f)
+                try:
+                    f()
+                    return True
+                except AssertionError:
+                    return False
+            return False
+
+        test_pass = (test_part("a"), test_part("b"))
 
         if all(test_pass):
 
