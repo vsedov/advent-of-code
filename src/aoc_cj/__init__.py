@@ -21,6 +21,17 @@ logging.basicConfig(
 )
 
 
+def solve_part(part: Literal["a", "b"], module, data) -> Answer:
+    if f := getattr(module, f"part_{part}", None):
+        assert inspect.isfunction(f)
+
+        resp = f(data)
+        print(resp)
+        assert resp is None or isinstance(resp, (int, str))
+        return resp
+    return None
+
+
 def solve(name: str, year: int, day: int, data: str) -> tuple[Answer, Answer]:
     ans_a: Answer = None
     ans_b: Answer = None
@@ -28,18 +39,8 @@ def solve(name: str, year: int, day: int, data: str) -> tuple[Answer, Answer]:
     try:
         module = importlib.import_module(f"{__name__}.aoc{year}.day_{day:02d}")
 
-        def solve_part(part: Literal["a", "b"]) -> Answer:
-            if f := getattr(module, f"part_{part}", None):
-                assert inspect.isfunction(f)
-
-                resp = f(data)
-                print(resp)
-                assert resp is None or isinstance(resp, (int, str))
-                return resp
-            return None
-
-        ans_a = solve_part("a")
-        ans_b = solve_part("b")
+        ans_a = solve_part("a", module, data)
+        ans_b = solve_part("b", module, data)
 
         test_module = importlib.import_module(f"tests.aoc{year}.{year}_day_{day:02d}_test")
 
