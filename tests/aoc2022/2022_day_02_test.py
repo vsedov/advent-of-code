@@ -13,3 +13,11 @@ def test_a():
 
 def test_b():
     assert d.part_b(TEST_INPUT) == 12
+
+
+def test_all():
+    from aocd import get_data
+
+    data = get_data(day=2, year=2022)
+    assert d.part_a(data) == 15337
+    assert d.part_b(data) == 11696
