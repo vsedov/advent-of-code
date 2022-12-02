@@ -5,6 +5,8 @@ import os
 from pathlib import Path
 from typing import Literal, Optional, Union
 
+from aocd import submit
+
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 LOGS_DIR = PROJECT_ROOT / "logs"
 LOGS_DIR.mkdir(exist_ok=True)
@@ -40,7 +42,6 @@ def solve(name: str, year: int, day: int, data: str) -> tuple[Answer, Answer]:
         ans_b = solve_part("b")
 
         test_module = importlib.import_module(f"tests.aoc{year}.{year}_day_{day:02d}_test")
-        print(test_module)
         test_pass = (False, False)
         if f := getattr(test_module, "test_a", None):
             assert inspect.isfunction(f)
@@ -58,12 +59,10 @@ def solve(name: str, year: int, day: int, data: str) -> tuple[Answer, Answer]:
                 test_pass = (test_pass[0], False)
 
         if all(test_pass):
-            from aocd import submit
 
             print("Test passed")
             submit(ans_a, part="a", day=day, year=year)
             submit(ans_b, part="b", day=day, year=year)
-            # | 01  | [?](https://adventofcode.com/2022/day/1)  | :x: | :x: |  :x:  |
             writeer_path = os.path.join(PROJECT_ROOT, f"src/aoc_cj/aoc{year}", "readme.md")
             with open(writeer_path, "r") as f:
                 lines = f.readlines()
@@ -74,11 +73,8 @@ def solve(name: str, year: int, day: int, data: str) -> tuple[Answer, Answer]:
                             f"| [?](https://adventofcode.com/{year}/day/{removed_leading_zero})",
                             f"| [{name}](https://adventofcode.com/{year}/day/{removed_leading_zero})",
                         )
-                        print(lines[i])
 
                     if f"| {day:02d} " in line:
-
-                        line = line.replace(":x:", ":heavy_check_mark:")
                         lines[i].replace(":x:", ":heavy_check_mark:")
                         break
 
