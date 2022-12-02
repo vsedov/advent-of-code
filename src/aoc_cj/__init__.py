@@ -41,8 +41,9 @@ def solve(name: str, year: int, day: int, data: str) -> tuple[Answer, Answer]:
         ans_a = solve_part("a")
         ans_b = solve_part("b")
 
+        test_module = importlib.import_module(f"tests.aoc{year}.{year}_day_{day:02d}_test")
+
         def test_part(part: Literal["a", "b"]) -> bool:
-            test_module = importlib.import_module(f"tests.aoc{year}.{year}_day_{day:02d}_test")
             if f := getattr(test_module, f"test_{part}", None):
                 assert inspect.isfunction(f)
                 try:
@@ -53,6 +54,7 @@ def solve(name: str, year: int, day: int, data: str) -> tuple[Answer, Answer]:
             return False
 
         test_pass = (test_part("a"), test_part("b"))
+        print(test_pass)
 
         if all(test_pass):
 
@@ -60,6 +62,7 @@ def solve(name: str, year: int, day: int, data: str) -> tuple[Answer, Answer]:
             submit(ans_a, part="a", day=day, year=year)
             submit(ans_b, part="b", day=day, year=year)
             writeer_path = os.path.join(PROJECT_ROOT, f"src/aoc_cj/aoc{year}", "readme.md")
+            print(f"{day:02d}")
             with open(writeer_path, "r") as f:
                 lines = f.readlines()
                 for i, line in enumerate(lines):
@@ -70,8 +73,8 @@ def solve(name: str, year: int, day: int, data: str) -> tuple[Answer, Answer]:
                             f"| [{name}](https://adventofcode.com/{year}/day/{removed_leading_zero})",
                         )
 
-                    if f"| {day:02d} " in line:
-                        lines[i].replace(":x:", ":heavy_check_mark:")
+                    if f"| {day:02d}  |" in line:
+                        lines[i] = line.replace(" :x: ", ":heavy_check_mark:")
                         break
 
             with open(writeer_path, "w") as f:
