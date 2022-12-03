@@ -1,7 +1,7 @@
 from typing import Generator
 
-from src.aoc_cj import solve
 from src.aoc_cj.aoc2022 import YEAR, get_day
+from src.aoc_cj.aoc_helper import Aoc
 
 
 def get_calories(txt: str) -> Generator[int, None, None]:
@@ -22,8 +22,5 @@ def main(txt: str) -> None:
 
 
 if __name__ == "__main__":
-    from aocd import get_data
-
-    day = get_day()
-
-    solve("Calorie Counting", YEAR, day, get_data(day=day, year=YEAR))
+    aoc = Aoc(day=get_day(), years=YEAR)
+    aoc.run(main, submit=True, part="both")
