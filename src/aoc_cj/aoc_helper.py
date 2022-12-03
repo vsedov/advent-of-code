@@ -1,9 +1,10 @@
 import importlib
 import inspect
 from datetime import datetime
-from typing import Literal
+from typing import Literal, Union
 
 from aocd import get_data, submit
+from aocd.models import Puzzle
 
 from src.aoc_cj import solve
 
@@ -33,7 +34,7 @@ class Aoc:
         self.submit(answer)
         return answer
 
-    def run(self, func=None, submit=False, part=None):
+    def run(self, func=None, submit: bool = False, part: Union[None, str] = None, custom_solve: bool = False):
         """Run a function and submit the answer to the website.
         func : Main Function to run
             This need to be the outside function, although it can be None
@@ -41,6 +42,10 @@ class Aoc:
             Boolean : True | False
         part : If Submit is active
             'a' | 'b' | 'both' or None
+        custom_solve : If True, it will run the custom solve function
+            Boolean : True | False
+            This function will test the test cases: test_a and test_b test the current part_a and part_b functions
+            and will submit the answer to the website : it will also update the README.md file
         """
         if func is not None:
             func(self.get_data())
@@ -54,6 +59,9 @@ class Aoc:
                 self.submit_part_a(getattr(modules, "part_a")(self.get_data()))
             elif part == "b":
                 self.submit_part_b(getattr(modules, "part_b")(self.get_data()))
+
+            if custom_solve:
+                self.custom_solve(self.get_problem_name())
 
     def run_test(self, part: Literal["a", "b"]):
         if f := getattr(self.test_module, f"test_{part}", None):
@@ -70,3 +78,8 @@ class Aoc:
 
     def custom_solve(self, name: str):
         solve(name=name, year=self.year, day=self.day, data=self.get_data())
+
+    def get_problem_name(self) -> str:
+        puzzle = Puzzle(year=self.year, day=self.day)
+        soup = puzzle._soup()
+        return soup.find("h2").text.replace("---", "").replace(f"Day {self.day}:", "").strip()

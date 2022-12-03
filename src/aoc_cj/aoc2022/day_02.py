@@ -60,4 +60,4 @@ def main(txt: str) -> None:
 
 if __name__ == "__main__":
     aoc = Aoc(day=get_day(), years=YEAR)
-    aoc.custom_solve("Rock Paper Scissors")
+    aoc.run(main, submit=True, custom_solve=True)
