@@ -46,4 +46,4 @@ def main(txt: str) -> None:
 
 if __name__ == "__main__":
     aoc = Aoc(day=get_day(), years=YEAR)
-    aoc.run(main, submit=True, part="both")
+    aoc.custom_solve("Rucksack Reorganization")

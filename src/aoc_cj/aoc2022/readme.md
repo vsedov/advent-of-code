@@ -4,7 +4,7 @@
 | :-: | ----------------------------------------- | :-: | :-: | :---: |
 | 01  | [Calorie Counting](https://adventofcode.com/2022/day/1)  | :heavy_check_mark: | :heavy_check_mark: |  :heavy_check_mark:  |
 | 02  | [Rock Paper Scissors](https://adventofcode.com/2022/day/2)  |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |
-| 03  | [?](https://adventofcode.com/2022/day/3)  | :x: | :x: |  :x:  |
+| 03  | [Rucksack Reorganization](https://adventofcode.com/2022/day/3)  |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |
 | 04  | [?](https://adventofcode.com/2022/day/4)  | :x: | :x: |  :x:  |
 | 05  | [?](https://adventofcode.com/2022/day/5)  | :x: | :x: |  :x:  |
 | 06  | [?](https://adventofcode.com/2022/day/6)  | :x: | :x: |  :x:  |

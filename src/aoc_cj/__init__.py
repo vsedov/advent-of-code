@@ -62,24 +62,25 @@ def solve(name: str, year: int, day: int, data: str) -> tuple[Answer, Answer]:
             submit(ans_a, part="a", day=day, year=year)
             submit(ans_b, part="b", day=day, year=year)
             writeer_path = os.path.join(PROJECT_ROOT, f"src/aoc_cj/aoc{year}", "readme.md")
-            print(f"{day:02d}")
-            with open(writeer_path, "r") as f:
+            with open(writeer_path, "r+") as f:
                 lines = f.readlines()
                 for i, line in enumerate(lines):
                     removed_leading_zero = str(day).lstrip("0")
                     if f"| [?](https://adventofcode.com/{year}/day/{removed_leading_zero})" in line:
+                        print(f"Found line {i}")
                         lines[i] = line.replace(
                             f"| [?](https://adventofcode.com/{year}/day/{removed_leading_zero})",
                             f"| [{name}](https://adventofcode.com/{year}/day/{removed_leading_zero})",
-                        )
+                        ).replace(" :x: ", ":heavy_check_mark:")
 
-                    if f"| {day:02d}  |" in line:
-                        lines[i] = line.replace(" :x: ", ":heavy_check_mark:")
                         break
-
-            with open(writeer_path, "w") as f:
+                f.seek(0)
                 f.writelines(lines)
+                f.truncate()
                 f.close()
+
+        else:
+            logging.warning(f"Test Case is not parsing{test_pass}")
 
     except ModuleNotFoundError as e:
         raise NotImplementedError() from e

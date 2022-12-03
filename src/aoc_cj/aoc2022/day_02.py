@@ -1,3 +1,4 @@
+from src.aoc_cj import solve
 from src.aoc_cj.aoc2022 import YEAR, get_day
 from src.aoc_cj.aoc_helper import Aoc
 
@@ -59,5 +60,4 @@ def main(txt: str) -> None:
 
 if __name__ == "__main__":
     aoc = Aoc(day=get_day(), years=YEAR)
-    aoc.run(main, submit=True, part="both")
-    # aoc.run_all_tests()
+    aoc.custom_solve("Rock Paper Scissors")

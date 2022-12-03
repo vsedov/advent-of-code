@@ -17,4 +17,4 @@ def test_a():
 
 
 def test_b():
-    assert d.part_b(TEST_INPUT) == 0
+    assert d.part_b(TEST_INPUT) == 70
