@@ -5,7 +5,8 @@ from typing import Tuple
 from src.aoc_cj.aoc2022 import YEAR, get_day
 from src.aoc_cj.aoc_helper import Aoc
 
-def convert_char(chr)->int:
+
+def convert_char(chr) -> int:
     uper_case = string.ascii_uppercase
     lower_case = string.ascii_lowercase
 
