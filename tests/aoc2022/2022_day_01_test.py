@@ -18,9 +18,9 @@ TEST_INPUT = """
 """
 
 
-def test_a():
+def test_a() -> None:
     assert d.part_a(TEST_INPUT) == 24000
 
 
-def test_b():
+def test_b() -> None:
     assert d.part_b(TEST_INPUT) == 45000

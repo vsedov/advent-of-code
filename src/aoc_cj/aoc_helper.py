@@ -1,7 +1,7 @@
 import importlib
 import inspect
 from datetime import datetime
-from typing import Literal, Union
+from typing import Any, Literal, Union
 
 from aocd import get_data, submit
 from aocd.models import Puzzle
@@ -17,24 +17,24 @@ class Aoc:
         self.data = get_data(day=self.day, year=self.year)
         self.test_module = importlib.import_module(f"tests.aoc{self.year}.{self.year}_day_{self.day:02d}_test")
 
-    def submit(self, answer, part=None):
+    def submit(self, answer, part=None) -> None:
         submit(answer, part=part, day=self.day, year=self.year)
 
-    def get_data(self):
+    def get_data(self) -> str:
         return self.data
 
-    def submit_part_a(self, answer):
+    def submit_part_a(self, answer) -> None:
         self.submit(answer, part="a")
 
-    def submit_part_b(self, answer):
+    def submit_part_b(self, answer) -> None:
         self.submit(answer, part="b")
 
-    def wrapper(self, func):
+    def wrapper(self, func) -> Any:
         answer = func(self.get_data())
         self.submit(answer)
         return answer
 
-    def run(self, func=None, submit: bool = False, part: Union[None, str] = None, custom_solve: bool = False):
+    def run(self, func=None, submit: bool = False, part: Union[None, str] = None, custom_solve: bool = False) -> None:
         """Run a function and submit the answer to the website.
         func : Main Function to run
             This need to be the outside function, although it can be None
@@ -63,7 +63,7 @@ class Aoc:
             if custom_solve:
                 self.custom_solve(self.get_problem_name())
 
-    def run_test(self, part: Literal["a", "b"]):
+    def run_test(self, part: Literal["a", "b"]) -> bool:
         if f := getattr(self.test_module, f"test_{part}", None):
             assert inspect.isfunction(f)
             try:
@@ -73,10 +73,10 @@ class Aoc:
                 return False
         return False
 
-    def run_all_tests(self):
+    def run_all_tests(self) -> None:
         __import__("os").system("poetry run pytest")
 
-    def custom_solve(self, name: str):
+    def custom_solve(self, name: str) -> None:
         solve(name=name, year=self.year, day=self.day, data=self.get_data())
 
     def get_problem_name(self) -> str:

@@ -2,7 +2,6 @@
 import datetime
 import inspect
 import os
-import sys
 
 CORE_FILE = '''
 from src.aoc_cj.aoc{YEAR} import YEAR, get_day
@@ -26,7 +25,7 @@ def main(txt: str) -> None:
 
 if __name__ == "__main__":
     aoc = Aoc(day=get_day(), years=YEAR)
-    aoc.run(main, submit=False, part="both")
+    aoc.run(main, submit=False, part = 'a',  custom_solve=False )
 '''
 
 TEST_TEMPLATE = '''
@@ -38,11 +37,11 @@ TEST_INPUT = """
 """.strip()
 
 
-def test_a():
+def test_a() -> None:
     assert d.part_a(TEST_INPUT) == 0
 
 
-def test_b():
+def test_b() -> None:
     assert d.part_b(TEST_INPUT) == 0
 
 '''
