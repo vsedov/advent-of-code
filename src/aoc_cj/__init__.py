@@ -77,7 +77,6 @@ def solve(name: str, year: int, day: int, data: str) -> tuple[Answer, Answer]:
                 f.seek(0)
                 f.writelines(lines)
                 f.truncate()
-                f.close()
 
         else:
             logging.warning(f"Test Case is not parsing{test_pass}")
