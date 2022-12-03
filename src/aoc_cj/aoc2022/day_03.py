@@ -1,4 +1,3 @@
-import string
 from collections import Counter
 from functools import reduce
 from typing import Tuple

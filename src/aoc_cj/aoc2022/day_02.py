@@ -1,4 +1,3 @@
-from src.aoc_cj import solve
 from src.aoc_cj.aoc2022 import YEAR, get_day
 from src.aoc_cj.aoc_helper import Aoc
 
