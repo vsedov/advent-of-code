@@ -58,22 +58,19 @@ class Aoc:
             modules = importlib.import_module(f"src.aoc_cj.aoc{self.year}.day_{self.day:02d}")
             tests = (self.run_test("a"), self.run_test("b"))
             options = {
-                "both": (0, 1),
                 "a": (0,),
                 "b": (1,),
+                "both": (0, 1),
             }
             print(f"Tests: {tests}")
             print(f"Current part: {part}")
+
             for i in options.get(part, ()):
-                if part == "both" and all(tests):
-                    for i in range(1, 3):
-                        part = "a" if i == 1 else "b"
-                        print(f"Submitting part {part}")
-                        self.submit(getattr(modules, f"part_{part}")(self.get_data()), part=part)
-                    break
+                current_part = "a" if i == 0 else "b"
                 if tests[i]:
-                    print("Submitting part", part)
-                    self.submit_part_a(getattr(modules, f"part_{part}")(self.get_data()))
+                    self.submit(getattr(modules, f"part_{current_part}")(self.get_data()), part=current_part)
+                else:
+                    print(f"Part {current_part} is not passing the test cases")
 
             if readme_update:
                 self.update_readme()
