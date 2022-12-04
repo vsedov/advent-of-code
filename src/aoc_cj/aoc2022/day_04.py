@@ -43,4 +43,4 @@ def main(txt: str) -> None:
 
 if __name__ == "__main__":
     aoc = Aoc(day=get_day(), years=YEAR)
-    aoc.run(main, submit=True, part=None, custom_solve=True)
+    aoc.run(main, submit=True, part="both", readme_update=False)

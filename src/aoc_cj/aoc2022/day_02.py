@@ -59,4 +59,4 @@ def main(txt: str) -> None:
 
 if __name__ == "__main__":
     aoc = Aoc(day=get_day(), years=YEAR)
-    aoc.run(main, submit=True, custom_solve=True)
+    aoc.run(main, submit=True, readme_update=True)

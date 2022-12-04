@@ -1,12 +1,16 @@
 import importlib
 import inspect
+import os
 from datetime import datetime
+from pathlib import Path
 from typing import Any, Literal, Union
 
 from aocd import get_data, submit
 from aocd.models import Puzzle
 
 from src.aoc_cj import solve
+
+PROJECT_ROOT = Path(__file__).parent.parent.parent
 
 
 class Aoc:
@@ -34,7 +38,7 @@ class Aoc:
         self.submit(answer)
         return answer
 
-    def run(self, func=None, submit: bool = False, part: Union[None, str] = None, custom_solve: bool = False) -> None:
+    def run(self, func=None, submit: bool = False, part: Union[None, str] = None, readme_update: bool = False) -> None:
         """Run a function and submit the answer to the website.
         func : Main Function to run
             This need to be the outside function, although it can be None
@@ -52,16 +56,27 @@ class Aoc:
 
         if submit:
             modules = importlib.import_module(f"src.aoc_cj.aoc{self.year}.day_{self.day:02d}")
-            if part == "both":
-                self.submit_part_a(getattr(modules, "part_a")(self.get_data()))
-                self.submit_part_b(getattr(modules, "part_b")(self.get_data()))
-            elif part == "a":
-                self.submit_part_a(getattr(modules, "part_a")(self.get_data()))
-            elif part == "b":
-                self.submit_part_b(getattr(modules, "part_b")(self.get_data()))
+            tests = (self.run_test("a"), self.run_test("b"))
+            options = {
+                "both": (0, 1),
+                "a": (0,),
+                "b": (1,),
+            }
+            print(f"Tests: {tests}")
+            print(f"Current part: {part}")
+            for i in options.get(part, ()):
+                if part == "both" and all(tests):
+                    for i in range(1, 3):
+                        part = "a" if i == 1 else "b"
+                        print(f"Submitting part {part}")
+                        self.submit(getattr(modules, f"part_{part}")(self.get_data()), part=part)
+                    break
+                if tests[i]:
+                    print("Submitting part", part)
+                    self.submit_part_a(getattr(modules, f"part_{part}")(self.get_data()))
 
-            if custom_solve:
-                self.custom_solve(self.get_problem_name())
+            if readme_update:
+                self.update_readme()
 
     def run_test(self, part: Literal["a", "b"]) -> bool:
         if f := getattr(self.test_module, f"test_{part}", None):
@@ -73,11 +88,30 @@ class Aoc:
                 return False
         return False
 
+    def update_readme(self) -> None:
+
+        writeer_path = os.path.join(PROJECT_ROOT, f"src/aoc_cj/aoc{self.year}", "readme.md")
+        with open(writeer_path, "r+") as f:
+            lines = f.readlines()
+            for i, line in enumerate(lines):
+                removed_leading_zero = str(self.day).lstrip("0")
+                if f"| [?](https://adventofcode.com/{self.year}/day/{removed_leading_zero})" in line:
+                    print(f"Found line {i}")
+                    lines[i] = line.replace(
+                        f"| [?](https://adventofcode.com/{self.year}/day/{removed_leading_zero})",
+                        f"| [{self.get_problem_name()}](https://adventofcode.com/{self.year}/day/{removed_leading_zero})",
+                    ).replace(" :x: ", ":heavy_check_mark:")
+
+                    break
+            f.seek(0)
+            f.writelines(lines)
+            f.truncate()
+
     def run_all_tests(self) -> None:
         __import__("os").system("poetry run pytest")
 
-    def custom_solve(self, name: str) -> None:
-        solve(name=name, year=self.year, day=self.day, data=self.get_data())
+    def custom_solve(self) -> None:
+        solve(year=self.year, day=self.day, data=self.get_data())
 
     def get_problem_name(self) -> str:
         puzzle = Puzzle(year=self.year, day=self.day)
