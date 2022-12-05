@@ -1,4 +1,3 @@
-
 import pytest
 
 from src.aoc_cj.aoc2022 import day_06 as d
@@ -13,4 +12,3 @@ def test_a() -> None:
 
 def test_b() -> None:
     assert d.part_b(TEST_INPUT) == 0
-
