@@ -86,6 +86,3 @@ def check_path_file(path, file) -> None:
             f.write("")
     else:
         print(f"File {file} already exists")
-
-
-create_file(day=5, year=2022)
