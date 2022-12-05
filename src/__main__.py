@@ -5,17 +5,11 @@ from src.aoc_cj.template import create_file
 
 help_text = """
 Create a new file for the Advent of Code challenge.
-
---create or -c: Create a new file for the challenge.
-    params:
-        day : int
-        year : int
-Example:
-python3 -m src --c 5 2022
 """
 
 parser = argparse.ArgumentParser(description=help_text)
-parser.add_argument("--create", "-c", nargs=2, type=int, help="Create a new file for the challenge.")
+parser.add_argument("--create", "-c", nargs=2, type=int, help="Create a new file for the challenge. Format: -c 2 2022")
+
 args = parser.parse_args()
 
 if args.create:
