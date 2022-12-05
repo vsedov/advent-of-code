@@ -1,7 +1,7 @@
 # create_file(day=5, year=2022)
 import argparse
 
-from src.aoc_cj.template import create_file
+from src.utils.template import create_file
 
 help_text = """
 Create a new file for the Advent of Code challenge.
