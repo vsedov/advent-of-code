@@ -6,7 +6,7 @@
 | 02  | [Rock Paper Scissors](https://adventofcode.com/2022/day/2)  |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |
 | 03  | [Rucksack Reorganization](https://adventofcode.com/2022/day/3)  |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |
 | 04  | [Camp Cleanup](https://adventofcode.com/2022/day/4)  |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |
-| 05  | [?](https://adventofcode.com/2022/day/5)  | :x: | :x: |  :x:  |
+| 05  | [Supply Stacks](https://adventofcode.com/2022/day/5)  |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |
 | 06  | [?](https://adventofcode.com/2022/day/6)  | :x: | :x: |  :x:  |
 | 07  | [?](https://adventofcode.com/2022/day/7)  | :x: | :x: |  :x:  |
 | 08  | [?](https://adventofcode.com/2022/day/8)  | :x: | :x: |  :x:  |
