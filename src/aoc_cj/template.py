@@ -29,7 +29,7 @@ def main(txt: str) -> None:
 
 if __name__ == "__main__":
     aoc = Aoc(day=get_day(), years=YEAR)
-    aoc.run(main, submit=False, part = 'a',  custom_solve=False )
+    aoc.run(main, submit=False, part='a', readme_update=False)
 '''
 
 TEST_TEMPLATE = '''

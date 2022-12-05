@@ -1,16 +1,28 @@
 import importlib
 import inspect
+import logging
 import os
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Literal, Union
 
 from aocd import get_data, submit
-from aocd.models import Puzzle
+from icecream import ic
 
 from src.aoc_cj import solve
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent
+
+
+def warn(s):
+    logging.warning(s)
+
+
+def info(s):
+    logging.info(s)
+
+
+ic.configureOutput(outputFunction=info)
 
 
 class Aoc:
@@ -62,15 +74,17 @@ class Aoc:
                 "b": (1,),
                 "both": (0, 1),
             }
-            print(f"Tests: {tests}")
-            print(f"Current part: {part}")
+            ic(f"Tests: {tests}")
+            ic(f"Current part: {part}")
 
             for i in options.get(part, ()):
                 current_part = "a" if i == 0 else "b"
+                ic(f"Part {current_part} is not passing the test cases")
                 if tests[i]:
                     self.submit(getattr(modules, f"part_{current_part}")(self.get_data()), part=current_part)
                 else:
-                    print(f"Part {current_part} is not passing the test cases")
+                    ic.configureOutput(outputFunction=warn)
+                    ic(f"Part {current_part} is not passing the test cases")
 
             if readme_update:
                 self.update_readme()

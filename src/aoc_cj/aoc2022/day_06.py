@@ -1,4 +1,3 @@
-
 from src.aoc_cj.aoc2022 import YEAR, get_day
 from src.aoc_cj.aoc_helper import Aoc
 
@@ -20,4 +19,4 @@ def main(txt: str) -> None:
 
 if __name__ == "__main__":
     aoc = Aoc(day=get_day(), years=YEAR)
-    aoc.run(main, submit=False, part = 'a',  custom_solve=False )
+    aoc.run(main, submit=False, part='a', readme_update=False)
