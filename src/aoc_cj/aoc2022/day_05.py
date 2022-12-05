@@ -5,7 +5,7 @@ from src.aoc_cj.aoc2022 import YEAR, get_day
 from src.aoc_cj.aoc_helper import Aoc
 
 
-def input_parser(txt: str):
+def input_parser(txt: str) -> Tuple:
     stack, moves = txt.split("\n\n")
     return namedtuple("input", "setup moves")(
         stack.splitlines(), [tuple(int(i) for i in line.split() if i.isdigit()) for line in moves.splitlines()])

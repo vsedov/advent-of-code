@@ -8,15 +8,15 @@ def get_elf_list(txt: str) -> list:
     return list(range(int(txt.split('-')[0]), int(txt.split('-')[1]) + 1))
 
 
-def get_intersection(list_1, list_2):
+def get_intersection(list_1: list, list_2: list) -> int:
     return len(reduce(lambda x, y: x.intersection(y), [set(list_1), set(list_2)]))
 
 
-def check_duplicates(list_1, list_2) -> int:
+def check_duplicates(list_1: list, list_2: list) -> int:
     return get_intersection(list_1, list_2) >= len(sorted([list_1, list_2], key=len, reverse=False)[0])
 
 
-def check_duplicates_v2(*strings):
+def check_duplicates_v2(*strings: list) -> bool:
     return get_intersection(*strings) > 0
 
 

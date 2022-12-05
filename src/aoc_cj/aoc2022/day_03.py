@@ -6,17 +6,17 @@ from src.aoc_cj.aoc2022 import YEAR, get_day
 from src.aoc_cj.aoc_helper import Aoc
 
 
-def convert_char(chr) -> int:
+def convert_char(chr: str) -> int:
 
     return ord(chr.lower()) - ord("a") + (1 if chr.islower() else 27)
 
 
-def split_data(data) -> Tuple[str, str]:
+def split_data(data: str) -> Tuple[str, str]:
     half = len(data) // 2
     return data[:half], data[half:]
 
 
-def check_duplicates(*strings) -> int:
+def check_duplicates(*strings: str) -> int:
 
     set_conditions = reduce(lambda x, y: x.intersection(y), [set(Counter(i).keys()) for i in strings])
     return convert_char(set_conditions.pop())
