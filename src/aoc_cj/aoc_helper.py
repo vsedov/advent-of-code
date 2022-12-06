@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any, Literal, Union
 
 from aocd import get_data, submit
+from aocd.models import Puzzle
 from icecream import ic
 
 from src.aoc_cj import solve

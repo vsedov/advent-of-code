@@ -18,3 +18,4 @@ def test_a() -> None:
 
 def test_b() -> None:
     assert d.part_b(TEST_INPUT) == 4
+    

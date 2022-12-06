@@ -3,6 +3,9 @@ name = "advent-of-code"
 version = "0.1.0"
 description = ""
 authors = ["vsedov <viv.sedov@hotmail.com>"]
+packages = [
+    { include = "src" },
+]
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -19,9 +22,6 @@ pytest-cov = "^4.0.0"
 pre-commit = "^2.20.0"
 isort = "^5.10.1"
 ruff = "^0.0.149"
-
-[tool.poetry.plugins."adventofcode.user"]
-vsedov = "aoc_cj:solve"
 
 [tool.isort]
 known_first_party = ["aoc_cj"]
@@ -110,3 +110,8 @@ split_penalty_for_added_line_split="30"
 # split_penalty_import_names="0"
 split_penalty_logical_operator="300"
 use_tabs="False"
+
+[tool.poetry.plugins] # Optional super table
+
+[tool.poetry.plugins."adventofcode.user"]
+vsedov = "src.aoc_cj:solve"
