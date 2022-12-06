@@ -11,9 +11,7 @@ LOGS_DIR.mkdir(exist_ok=True)
 Answer = Optional[Union[int, str]]
 
 logging.basicConfig(
-    filename=LOGS_DIR / "aoc_cj.log",
-    level=logging.DEBUG,
-    format="%(asctime)s | %(name)s | %(levelname)s | %(message)s",
+    filename=LOGS_DIR / "aoc.log", level=logging.DEBUG, format="%(asctime)s | %(name)s | %(levelname)s | %(message)s",
 )
 
 
@@ -31,7 +29,7 @@ def solve(year: int, day: int, data: str) -> tuple[Answer, Answer]:
                 return resp
             return None
 
-        module = importlib.import_module(f"src.aoc_cj.aoc{year}.day_{day:02d}")
+        module = importlib.import_module(f"src.aoc.aoc{year}.day_{day:02d}")
 
         ans_a = solve_part("a")
         ans_b = solve_part("b")

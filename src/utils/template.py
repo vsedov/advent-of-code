@@ -8,8 +8,8 @@ day = now.day
 year = now.year
 
 CORE_FILE = '''
-from src.aoc_cj.aoc{YEAR} import YEAR, get_day
-from src.aoc_cj.aoc_helper import Aoc
+from src.aoc.aoc{YEAR} import YEAR, get_day
+from src.aoc.aoc_helper import Aoc
 
 
 def part_a(txt: str) -> int:
@@ -35,7 +35,7 @@ if __name__ == "__main__":
 TEST_TEMPLATE = '''
 import pytest
 
-from src.aoc_cj.aoc{YEAR} import day_{DAY} as d
+from src.aoc.aoc{YEAR} import day_{DAY} as d
 
 TEST_INPUT = """
 """.strip()
@@ -59,7 +59,7 @@ def create_file(day=day, year=year) -> None:
     project_path = os.path.dirname(
         os.path.dirname(os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))))
 
-    day_path = os.path.join(project_path, "src", "aoc_cj", f"aoc{year_str}")
+    day_path = os.path.join(project_path, "src", "aoc", f"aoc{year_str}")
     day_file = os.path.join(day_path, f"day_{day_str}.py")
     test_path = os.path.join(project_path, "tests", f"aoc{year_str}")
     test_file = os.path.join(test_path, f"{year}_day_{day_str}_test.py")

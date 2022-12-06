@@ -24,7 +24,7 @@ isort = "^5.10.1"
 ruff = "^0.0.149"
 
 [tool.isort]
-known_first_party = ["aoc_cj"]
+known_first_party = ["aoc"]
 line_length = 150
 
 [tool.ruff]
@@ -114,4 +114,4 @@ use_tabs="False"
 [tool.poetry.plugins] # Optional super table
 
 [tool.poetry.plugins."adventofcode.user"]
-vsedov = "src.aoc_cj:solve"
+vsedov = "src.aoc:solve"

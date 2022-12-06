@@ -1,8 +1,8 @@
 from collections import namedtuple
 from typing import Tuple
 
-from src.aoc_cj.aoc2022 import YEAR, get_day
-from src.aoc_cj.aoc_helper import Aoc
+from src.aoc.aoc2022 import YEAR, get_day
+from src.aoc.aoc_helper import Aoc
 
 
 def input_parser(txt: str) -> Tuple:

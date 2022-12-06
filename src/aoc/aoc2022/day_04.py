@@ -1,7 +1,7 @@
 from functools import reduce
 
-from src.aoc_cj.aoc2022 import YEAR, get_day
-from src.aoc_cj.aoc_helper import Aoc
+from src.aoc.aoc2022 import YEAR, get_day
+from src.aoc.aoc_helper import Aoc
 
 
 def get_elf_list(txt: str) -> list:

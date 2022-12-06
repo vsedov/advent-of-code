@@ -2,8 +2,8 @@ from collections import Counter
 from functools import reduce
 from typing import Tuple
 
-from src.aoc_cj.aoc2022 import YEAR, get_day
-from src.aoc_cj.aoc_helper import Aoc
+from src.aoc.aoc2022 import YEAR, get_day
+from src.aoc.aoc_helper import Aoc
 
 
 def convert_char(chr: str) -> int:

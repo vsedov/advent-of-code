@@ -1,6 +1,6 @@
 import pytest
 
-from src.aoc_cj.aoc2022 import day_04 as d
+from src.aoc.aoc2022 import day_04 as d
 
 TEST_INPUT = """
 2-4,6-8

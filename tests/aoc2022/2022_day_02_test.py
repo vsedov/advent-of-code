@@ -1,4 +1,4 @@
-from src.aoc_cj.aoc2022 import day_02 as d
+from src.aoc.aoc2022 import day_02 as d
 
 TEST_INPUT = """
 A Y

@@ -10,7 +10,7 @@ from aocd import get_data, submit
 from aocd.models import Puzzle
 from icecream import ic
 
-from src.aoc_cj import solve
+from src.aoc import solve
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 
@@ -68,7 +68,7 @@ class Aoc:
             func(self.get_data())
 
         if submit:
-            modules = importlib.import_module(f"src.aoc_cj.aoc{self.year}.day_{self.day:02d}")
+            modules = importlib.import_module(f"src.aoc.aoc{self.year}.day_{self.day:02d}")
             tests = (self.run_test("a"), self.run_test("b"))
             options = {
                 "a": (0,),
@@ -102,7 +102,7 @@ class Aoc:
 
     def update_readme(self) -> None:
 
-        writeer_path = os.path.join(PROJECT_ROOT, f"src/aoc_cj/aoc{self.year}", "readme.md")
+        writeer_path = os.path.join(PROJECT_ROOT, f"src/aoc/aoc{self.year}", "readme.md")
         with open(writeer_path, "r+") as f:
             lines = f.readlines()
             for i, line in enumerate(lines):
