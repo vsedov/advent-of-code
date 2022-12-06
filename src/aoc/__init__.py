@@ -21,6 +21,8 @@ def solve(year: int, day: int, data: str) -> tuple[Answer, Answer]:
 
     try:
 
+        module = importlib.import_module(f"src.aoc.aoc{year}.day_{day:02d}")
+
         def solve_part(part: Literal["a", "b"]) -> Answer:
             if f := getattr(module, f"part_{part}", None):
                 assert inspect.isfunction(f)
@@ -28,8 +30,6 @@ def solve(year: int, day: int, data: str) -> tuple[Answer, Answer]:
                 assert resp is None or isinstance(resp, (int, str))
                 return resp
             return None
-
-        module = importlib.import_module(f"src.aoc.aoc{year}.day_{day:02d}")
 
         ans_a = solve_part("a")
         ans_b = solve_part("b")
