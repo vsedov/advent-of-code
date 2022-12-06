@@ -4,7 +4,7 @@ from src.aoc.aoc_helper import Aoc
 
 def parser(n: int, txt: str) -> int:
     txt = txt.strip()
-    return [i for i in range(n, len(txt)) if len(set(txt[i - n:i])) == n][0]
+    return next(i for i in range(n, len(txt)) if len(set(txt[i - n:i])) == n)
 
 
 def part_a(txt: str) -> int:
