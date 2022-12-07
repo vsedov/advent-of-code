@@ -71,7 +71,7 @@ def create_file(day=day, year=year) -> None:
     create_template(test_file, TEST_TEMPLATE, day_str, year_str)
 
 
-def create_template(file, template, day_str=day, year_str=year,) -> None:
+def create_template(file, template: str, day_str: str = str(day), year_str: str = str(year),) -> None:
     if os.stat(file).st_size == 0:
         with open(file, "w") as f:
             f.write(template.format(DAY=day_str, YEAR=year_str))

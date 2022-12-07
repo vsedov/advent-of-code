@@ -8,7 +8,7 @@
 | 04  | [Camp Cleanup](https://adventofcode.com/2022/day/4)  |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |
 | 05  | [Supply Stacks](https://adventofcode.com/2022/day/5)  |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |
 | 06  | [Tuning Trouble](https://adventofcode.com/2022/day/6)  |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |
-| 07  | [?](https://adventofcode.com/2022/day/7)  | :x: | :x: |  :x:  |
+| 07  | [No Space Left On Device](https://adventofcode.com/2022/day/7)  |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |
 | 08  | [?](https://adventofcode.com/2022/day/8)  | :x: | :x: |  :x:  |
 | 09  | [?](https://adventofcode.com/2022/day/9)  | :x: | :x: |  :x:  |
 | 10  | [?](https://adventofcode.com/2022/day/10) | :x: | :x: |  :x:  |
