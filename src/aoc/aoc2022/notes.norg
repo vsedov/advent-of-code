@@ -4,7 +4,7 @@ description:
 authors: viv
 categories: 
 created: 2022-12-08
-updated: 2022-12-08
+updated: 2022-12-10
 version: 0.0.18
 @end
 
@@ -38,6 +38,49 @@ version: 0.0.18
   bottom left bottom right botoom middle
   @end
   These would contain the conditions for each action, to where you can see a tree
+
+
+
+* Day 10 
+  - figure out tehsignal being sent  by the cpul the cpu has a single register : X
+  -- Starts with valuie 1 : supports 2 instructios
+
+  - addx V will append V to the list , like it will increase the previous value by x 
+  - nnop takes one cycle to complete ; it does not effect anything else
+  @code 
+
+    noop
+    addx 3
+    addx -5
+  @end
+** Whats Happening
+   -First instruction X is 1 : when you run noop, you can skip the instruction i think ? 
+   - At the start of the second cycle: the addx 3 instruction will add 3 to the queue ? : or list 
+   -- But will not sumunate the values : so is it just adding the value to the list  ?
+
+  - NOOP: skip 
+   -- ADD 3 to queue 
+   -- (add 1 + 3) and queue to the list so -5 
+   -- and then you have another cycle 
+
+   cycles = 0
+   - noop: one cycle : cycles+=1
+   - addx 3 : cycles+=2 : X register is increaseed by the value V After the second  loop
+   - addx 5 : cycles+=2 : x register incresed with 5 
+
+  - total cycles : 5 
+
+* Key info
+  - noop : 1 cycle
+  - addx : 2 cycles
+  - Cycle number multiplioed by the value of x 
+
+  - 20th and then every 40th cyucle from that point
+
+
+
+
+
 
 
 
