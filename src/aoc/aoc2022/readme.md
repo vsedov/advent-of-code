@@ -11,7 +11,7 @@
 | 07  | [No Space Left On Device](https://adventofcode.com/2022/day/7)  |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |
 | 08  | [Treetop Tree House](https://adventofcode.com/2022/day/8)  |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |
 | 09  | [Rope Bridge](https://adventofcode.com/2022/day/9)  |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |
-| 10  | [?](https://adventofcode.com/2022/day/10) | :x: | :x: |  :x:  |
+| 10  | [Cathode-Ray Tube](https://adventofcode.com/2022/day/10) |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |
 | 11  | [?](https://adventofcode.com/2022/day/11) | :x: | :x: |  :x:  |
 | 12  | [?](https://adventofcode.com/2022/day/12) | :x: | :x: |  :x:  |
 | 13  | [?](https://adventofcode.com/2022/day/13) | :x: | :x: |  :x:  |
