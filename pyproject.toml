@@ -16,6 +16,8 @@ taskipy = "^1.10.3"
 mypy = "^0.991"
 parse = "^1.19.0"
 numpy = "^1.23.5"
+debugpy = "^1.6.4"
+yapf = "^0.32.0"
 
 
 [tool.poetry.dev-dependencies]

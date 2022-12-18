@@ -12,7 +12,7 @@
 | 08  | [Treetop Tree House](https://adventofcode.com/2022/day/8)  |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |
 | 09  | [Rope Bridge](https://adventofcode.com/2022/day/9)  |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |
 | 10  | [Cathode-Ray Tube](https://adventofcode.com/2022/day/10) |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |
-| 11  | [?](https://adventofcode.com/2022/day/11) | :x: | :x: |  :x:  |
+| 11  | [Monkey in the Middle](https://adventofcode.com/2022/day/11) |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |
 | 12  | [?](https://adventofcode.com/2022/day/12) | :x: | :x: |  :x:  |
 | 13  | [?](https://adventofcode.com/2022/day/13) | :x: | :x: |  :x:  |
 | 14  | [?](https://adventofcode.com/2022/day/14) | :x: | :x: |  :x:  |

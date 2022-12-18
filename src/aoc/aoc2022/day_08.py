@@ -42,14 +42,14 @@ def part_a(txt: str) -> int:
 
     np_data = np.array([list(map(int, list(x))) for x in txt.splitlines()], dtype=int)
     bool_list = np.full(np_data.shape, False, dtype=bool)
-    return parser_part_a(np_data, bool_list)
+    return int(parser_part_a(np_data, bool_list))
 
 
 def part_b(txt: str) -> int:
     np_data = np.array([list(map(int, list(x))) for x in txt.splitlines()], dtype=int)
     bool_list = np.full(np_data.shape, 0, dtype=int)
 
-    return parser_part_b(np_data, bool_list)
+    return int(parser_part_b(np_data, bool_list))
 
 
 def main(txt: str) -> None:
