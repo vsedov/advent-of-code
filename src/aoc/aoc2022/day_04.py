@@ -22,18 +22,24 @@ def check_duplicates_v2(*strings: list) -> bool:
 
 def part_a(txt: str) -> int:
 
-    return sum([
-        check_duplicates(get_elf_list(l_split.split(",")[0]), get_elf_list(l_split.split(",")[1]))
+    return sum(
+        check_duplicates(
+            get_elf_list(l_split.split(",")[0]),
+            get_elf_list(l_split.split(",")[1]),
+        )
         for l_split in txt.splitlines()
-    ])
+    )
 
 
 def part_b(txt: str) -> int:
 
-    return sum([
-        check_duplicates_v2(get_elf_list(l_split.split(",")[0]), get_elf_list(l_split.split(",")[1]))
+    return sum(
+        check_duplicates_v2(
+            get_elf_list(l_split.split(",")[0]),
+            get_elf_list(l_split.split(",")[1]),
+        )
         for l_split in txt.splitlines()
-    ])
+    )
 
 
 def main(txt: str) -> None:
