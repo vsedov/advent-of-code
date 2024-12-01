@@ -118,83 +118,59 @@ class Aoc:
         return False
 
     def update_readme(self) -> None:
-        readme_path = os.path.join(PROJECT_ROOT, f"src/aoc/aoc{self.year}", "readme.md")
+        readme_dir = os.path.join(PROJECT_ROOT, f"src/aoc/aoc{self.year}")
+        writeer_path = os.path.join(readme_dir, "readme.md")
 
-        # Create directory if it doesn't exist
-        os.makedirs(os.path.dirname(readme_path), exist_ok=True)
+        os.makedirs(readme_dir, exist_ok=True)
 
-        # Initialize table headers
         table_headers = [
-            "# Advent of Code Solutions\n",
+            f"# Advent of Code {self.year}\n",
             "\n",
-            "| Day | Problem | Solution | Part A | Part B |\n",
-            "|-----|---------|----------|---------|---------|",
+            "| Day | Problem | Part A | Part B | Complete |\n",
+            "|-----|---------|---------|---------|----------|\n",
         ]
 
-        # Generate default table content for all 25 days
-        default_table = []
-        for day in range(1, 26):
-            default_table.append(
-                f"| {day:02d} | [?](https://adventofcode.com/{self.year}/day/{day}) | [Solution](day_{day:02d}.py) | :x: | :x: |\n"
+        def create_table_row(day: int) -> str:
+            return (
+                f"| {day:02d} | "
+                f"[?](https://adventofcode.com/{self.year}/day/{day}) | "
+                f":x: | :x: | :x: |\n"
             )
 
         try:
-            # Try to read existing content
-            with open(readme_path, "r") as f:
+            with open(writeer_path, "r") as f:
                 lines = f.readlines()
-
-            # If file exists but doesn't have table, create new
-            if not any("| Day | Problem |" in line for line in lines):
-                lines = table_headers + ["\n"] + default_table
-
+                # Check if table exists and has correct format
+                if not any(
+                    "| Day | Problem | Part A | Part B |" in line for line in lines
+                ):
+                    lines = table_headers + [create_table_row(i) for i in range(1, 26)]
         except FileNotFoundError:
-            # Create new file with default table
-            lines = table_headers + ["\n"] + default_table
+            lines = table_headers + [create_table_row(i) for i in range(1, 26)]
 
-        # Update the specific day's entry
-        removed_leading_zero = str(self.day).lstrip("0")
-        day_found = False
+        with open(writeer_path, "w") as f:
+            for i, line in enumerate(lines):
+                removed_leading_zero = str(self.day).lstrip("0")
+                if f"| {self.day:02d} |" in line or f"/{removed_leading_zero})" in line:
+                    # Get test results
+                    part_a_passed = self.run_test("a")
+                    part_b_passed = self.run_test("b")
+                    completed = part_a_passed and part_b_passed
 
-        for i, line in enumerate(lines):
-            if f"day/{removed_leading_zero})" in line:
-                day_found = True
-                # Get current status
-                current_line = line
+                    # Create status markers
+                    part_a_status = ":heavy_check_mark:" if part_a_passed else ":x:"
+                    part_b_status = ":heavy_check_mark:" if part_b_passed else ":x:"
+                    complete_status = ":heavy_check_mark:" if completed else ":x:"
 
-                # Update problem name
-                if "[?]" in current_line:
-                    current_line = current_line.replace(
-                        f"[?](https://adventofcode.com/{self.year}/day/{removed_leading_zero})",
-                        f"[{self.get_problem_name()}](https://adventofcode.com/{self.year}/day/{removed_leading_zero})",
+                    # Create new line
+                    new_line = (
+                        f"| {self.day:02d} | "
+                        f"[{self.get_problem_name()}](https://adventofcode.com/{self.year}/day/{removed_leading_zero}) | "
+                        f"{part_a_status} | {part_b_status} | {complete_status} |\n"
                     )
+                    lines[i] = new_line
+                    break
 
-                # Update completion status based on test results
-                test_a_passed = self.run_test("a")
-                test_b_passed = self.run_test("b")
-
-                # Replace status markers
-                parts = current_line.split("|")
-                if test_a_passed:
-                    parts[-2] = " :heavy_check_mark: "
-                if test_b_passed:
-                    parts[-1] = " :heavy_check_mark: |\n"
-
-                lines[i] = "|".join(parts)
-                break
-
-        # If day wasn't found in existing table, add it
-        if not day_found:
-            new_line = (
-                f"| {self.day:02d} "
-                f"| [{self.get_problem_name()}](https://adventofcode.com/{self.year}/day/{removed_leading_zero}) "
-                f"| [Solution](day_{self.day:02d}.py) "
-                f"| {'✓' if self.run_test('a') else '❌'} "
-                f"| {'✓' if self.run_test('b') else '❌'} |\n"
-            )
-            lines.append(new_line)
-
-        # Write back to file
-        with open(readme_path, "w") as f:
             f.writelines(lines)
 
     def run_all_tests(self) -> None:
