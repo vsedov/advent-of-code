@@ -15,6 +15,7 @@ from src.aoc import solve
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 
 
+
 def warn(s):
     logging.warning(s)
 
