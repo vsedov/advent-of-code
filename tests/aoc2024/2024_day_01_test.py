@@ -1,5 +1,3 @@
-import pytest
-
 from src.aoc.aoc2024 import day_01 as d
 
 TEST_INPUT = """
@@ -17,4 +15,4 @@ def test_a() -> None:
 
 
 def test_b() -> None:
-    assert d.part_b(TEST_INPUT) == 21
+    assert d.part_b(TEST_INPUT) == 31

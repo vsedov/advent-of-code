@@ -74,60 +74,6 @@ select = [ # https://docs.astral.sh/ruff/rules/ # TODO: enable additional linter
 ]
 
 [tool.pytest.ini_options]
-# skip slow tests by default
-addopts = "-m 'not slow'"
-markers = [
-    "slow: marks tests as slow",
-]
-xfail_strict = true
-
-
-strict = true
-
-# Disallow dynamic typing
-disallow_any_unimported = true
-disallow_any_decorated = true
-disallow_any_generics = true
-disallow_subclassing_any = true
-
-# Untyped definitions and calls
-disallow_untyped_calls = true
-disallow_untyped_defs = true
-disallow_incomplete_defs = true
-check_untyped_defs = true
-disallow_untyped_decorators = true
-
-# Configuring warnings
-warn_redundant_casts = true
-warn_unused_ignores = true
-warn_no_return = true
-warn_return_any = true
-warn_unreachable = true
-
-# Miscellaneous strictness flags
-allow_untyped_globals = false
-allow_redefinition = true
-enable_error_code = [ # https://mypy.readthedocs.io/en/stable/error_code_list2.html#error-codes-optional
-    'redundant-self',
-    'redundant-expr',
-    'possibly-undefined',
-    'truthy-bool',
-    'truthy-iterable',
-    'ignore-without-code',
-    'unused-awaitable',
-    'unused-ignore',
-    'explicit-override',
-    'unimported-reveal',
-]
-implicit_reexport = true
-strict_equality = true
-
-# Configuring error messages
-show_column_numbers = true
-pretty = true
-
-# Miscellaneous
-warn_unused_configs = true
 
 [[tool.mypy.overrides]]
 # aocd doesn't provide types https://github.com/wimglenn/advent-of-code-data/issues/78

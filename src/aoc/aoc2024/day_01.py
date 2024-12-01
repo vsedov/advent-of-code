@@ -6,21 +6,26 @@ from src.aoc.aoc2024 import YEAR, get_day
 from src.aoc.aoc_helper import Aoc
 
 
-def parse(txt: str) -> Tuple[Tuple[int, ...], Tuple[int, ...]]:
-    cols = tuple(zip(*(map(int, line.split()) for line in txt.splitlines())))
-    if len(cols) != 2:
-        raise ValueError("Input must yield exactly two columns")
-    return cols
+def parse(txt: str) -> tuple[tuple[int, ...], tuple[int, ...]]:
+    l, r = list(
+        map(
+            list,
+            zip(*[list(map(int, line.split())) for line in txt.splitlines()]),
+        )
+    )
+    return l, r
 
 
 def part_a(txt: str) -> int:
-    left, right = parse(txt)
-    return sum(map(abs, map(sub, sorted(left), sorted(right))))
+    left_col, right_col = parse(txt)
+    return sum(
+        abs(l - r) for l, r in zip(sorted(sorted(left_col)), sorted(sorted(right_col)))
+    )
 
 
 def part_b(txt: str) -> int:
-    left, right = parse(txt)
-    return sum(l * count for l, count in zip(left, Counter(right).values()))
+    l, r = parse(txt)
+    return sum(x * r.count(x) for x in l)
 
 
 def main(txt: str) -> None:
