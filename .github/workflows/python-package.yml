@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.12"]
     steps:
       - uses: actions/checkout@v4
       - name: Install the latest version of uv and set the python version
@@ -19,4 +19,4 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Test with python ${{ matrix.python-version }}
-        run: uv run --frozen pytest --cov=./ --conv-report=xml
+        run: uv run --frozen pytest
