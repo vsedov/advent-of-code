@@ -8,9 +8,6 @@ from src.aoc.aoc_helper import Aoc
 Nums: TypeAlias = Iterable[int]
 
 
-Nums: TypeAlias = Iterable[int]
-
-
 def safe(nums: Nums, /) -> bool:
     match [b - a for a, b in pairwise(nums)]:
         case [*diffs] if all(d in {1, 2, 3} for d in diffs) or all(
