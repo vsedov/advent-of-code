@@ -5,7 +5,7 @@
 | 01 | [Historian Hysteria](https://adventofcode.com/2024/day/1) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
 | 02 | [Red-Nosed Reports](https://adventofcode.com/2024/day/2) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
 | 03 | [Mull It Over](https://adventofcode.com/2024/day/3) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
-| 04 | [?](https://adventofcode.com/2024/day/4) | :x: | :x: | :x: |
+| 04 | [Ceres Search](https://adventofcode.com/2024/day/4) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
 | 05 | [?](https://adventofcode.com/2024/day/5) | :x: | :x: | :x: |
 | 06 | [?](https://adventofcode.com/2024/day/6) | :x: | :x: | :x: |
 | 07 | [?](https://adventofcode.com/2024/day/7) | :x: | :x: | :x: |
