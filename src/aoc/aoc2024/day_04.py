@@ -1,16 +1,19 @@
 from collections.abc import Iterator
-from itertools import product
+from itertools import product, starmap, takewhile
+from operator import itemgetter
+
+from more_itertools import flatten, locate
 
 from src.aoc.aoc2024 import YEAR, get_day
 from src.aoc.aoc_helper import Aoc
 
 
 def ray(grid: list[str], x: int, y: int, dx: int, dy: int) -> str:
-    return "".join(
-        grid[y + dy * i][x + dx * i]
-        for i in range(4)
-        if 0 <= y + dy * i < len(grid) and 0 <= x + dx * i < len(grid[0])
+    valid = takewhile(
+        lambda p: 0 <= p[0] < len(grid) and 0 <= p[1] < len(grid[0]),
+        ((y + dy * i, x + dx * i) for i in range(4)),
     )
+    return "".join(grid[y][x] for y, x in valid)
 
 
 def part_a(txt: str) -> int:
@@ -19,10 +22,9 @@ def part_a(txt: str) -> int:
         ray(grid, x, y, dx, dy) == "XMAS"
         for (y, x), (dy, dx) in product(
             (
-                (y, x)
-                for y, row in enumerate(grid)
-                for x, c in enumerate(row)
-                if c == "X"
+                (i, j)
+                for i, row in enumerate(grid)
+                for j in locate(row, lambda c: c == "X")
             ),
             [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)],
         )
