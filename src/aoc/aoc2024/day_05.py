@@ -28,24 +28,23 @@ def check_order(deps: npt.NDArray, sequence: npt.NDArray) -> bool:
     return True
 
 
-@njit
+@njit(parallel=True, cache=True)
 def find_valid_order(deps: npt.NDArray, numbers: npt.NDArray) -> npt.NDArray:
     n = len(numbers)
     result = np.empty(n, dtype=np.int64)
     used = np.zeros(n, dtype=np.bool_)
-    in_degree = np.zeros(n, dtype=np.int64)
-    for i in range(n):
-        in_degree[i] = np.sum(deps[numbers, numbers[i]])
 
-    # O(n) topological sort
+    num_deps = deps[numbers][:, numbers]
+
+    in_degree = num_deps.sum(axis=0)
+
     for pos in range(n):
-        next_idx = np.where(~used & (in_degree == 0))[0][0]
+        available = np.logical_and(~used, in_degree == 0)
+        next_idx = np.nonzero(available)[0][0]
         result[pos] = numbers[next_idx]
         used[next_idx] = True
-        # amortisation
-        for j in range(n):
-            if not used[j] and deps[numbers[next_idx], numbers[j]]:
-                in_degree[j] -= 1
+        deps_mask = np.logical_and(num_deps[next_idx], ~used)
+        in_degree = in_degree - deps_mask.astype(np.int64)
 
     return result
 
