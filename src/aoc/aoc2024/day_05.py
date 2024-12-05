@@ -17,25 +17,9 @@ def parse_rules(rules_array: npt.NDArray) -> npt.NDArray:
     return dep_matrix
 
 
-# @njit
-# def check_order(deps: npt.NDArray, sequence: npt.NDArray) -> bool:
-#     n = len(sequence)
-#     for i in range(n):
-#         curr = sequence[i]
-#         for j in range(i + 1, n):
-#             if deps[curr, sequence[j]] == 1:
-#                 return False
-#     return True
-# @njit
-# def check_order(deps: npt.NDArray, sequence: npt.NDArray) -> bool:
-#     seen = np.zeros_like(deps[0], dtype=np.bool_)
-#     for num in sequence:
-#         if np.any(deps[num] & seen):
-#             return False
-#         seen[num] = True
-#     return True
 @njit
 def check_order(deps: npt.NDArray, sequence: npt.NDArray) -> bool:
+    # sourcery skip: use-any, use-next
     n = len(sequence)
     seq_deps = deps[sequence]
     for i in range(n - 1):
@@ -107,3 +91,21 @@ def main(txt: str) -> None:
 if __name__ == "__main__":
     aoc = Aoc(day=get_day(), years=YEAR)
     aoc.run(main, submit=True, part="both", readme_update=True)
+
+# @njit
+# def check_order(deps: npt.NDArray, sequence: npt.NDArray) -> bool:
+#     n = len(sequence)
+#     for i in range(n):
+#         curr = sequence[i]
+#         for j in range(i + 1, n):
+#             if deps[curr, sequence[j]] == 1:
+#                 return False
+#     return True
+# @njit
+# def check_order(deps: npt.NDArray, sequence: npt.NDArray) -> bool:
+#     seen = np.zeros_like(deps[0], dtype=np.bool_)
+#     for num in sequence:
+#         if np.any(deps[num] & seen):
+#             return False
+#         seen[num] = True
+#     return True
