@@ -50,18 +50,18 @@ def find_valid_order(deps: npt.NDArray, numbers: npt.NDArray) -> npt.NDArray:
     return result
 
 
-def parse(txt: str) -> Tuple[npt.NDArray, npt.NDArray]:
+def parse(txt: str) -> Tuple[npt.NDArray[np.int64], npt.NDArray[np.int64]]:
     rules_txt, sequences_txt = txt.split("\n\n")
-    rules = np.array(
-        [[int(x) for x in line.split("|")] for line in rules_txt.splitlines()],
-        dtype=np.int64,
-    )
 
-    sequences = []
-    for line in sequences_txt.splitlines():
-        seq = np.fromstring(line, sep=",", dtype=np.int64)
-        sequences.append(seq)
-    return rules, np.array(sequences, dtype=object)
+    return np.array(
+        [line.split("|") for line in rules_txt.splitlines()], dtype=np.int64
+    ), np.array(
+        [
+            np.fromstring(line, sep=",", dtype=np.int64)
+            for line in sequences_txt.splitlines()
+        ],
+        dtype=object,
+    )
 
 
 def part_a(txt: str) -> int:
