@@ -113,7 +113,6 @@ class Aoc:
                     data_generator=data_generator,
                     min_n=len(self.data) // 10,
                     max_n=len(self.data),
-                    # n_measures=5,
                     n_repeats=5,
                     n_timings=5,
                 )
@@ -184,7 +183,7 @@ class Aoc:
         part: Union[None, str] = None,
         readme_update: bool = False,
         profile: bool = True,
-        runs: int = 100,
+        runs: int = 1000,
     ) -> Dict[str, PerformanceMetrics]:
         """Main execution method handling tests, profiling, and submissions."""
         console.rule(f"[bold blue]Advent of Code {self.year} - Day {self.day}")
