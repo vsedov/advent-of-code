@@ -33,9 +33,7 @@ def find_valid_order(deps: npt.NDArray, numbers: npt.NDArray) -> npt.NDArray:
     n = len(numbers)
     result = np.empty(n, dtype=np.int64)
     used = np.zeros(n, dtype=np.bool_)
-
     num_deps = deps[numbers][:, numbers]
-
     in_degree = num_deps.sum(axis=0)
 
     for pos in range(n):
@@ -89,7 +87,7 @@ def main(txt: str) -> None:
 
 if __name__ == "__main__":
     aoc = Aoc(day=get_day(), years=YEAR)
-    aoc.run(main, submit=True, part="both", readme_update=True)
+    aoc.run(main, submit=False, part="both", readme_update=True, profile=True)
 
 # @njit
 # def check_order(deps: npt.NDArray, sequence: npt.NDArray) -> bool:
