@@ -42,4 +42,4 @@ def main(txt: str) -> None:
 
 if __name__ == "__main__":
     aoc = Aoc(day=get_day(), years=YEAR)
-    aoc.run(main, submit=True, part="both", readme_update=True)
+    aoc.run(main, submit=False, part="both", readme_update=True, profile=True)
