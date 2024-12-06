@@ -72,37 +72,23 @@ class ComplexityAnalyzer:
 
         return data_generator
 
-    # @staticmethod
-    # def create_data_generator(data: str):
-    #     """Creates an appropriate data generator based on input type"""
-    #     # Pre-split the lines once
-    #     lines = data.split("\n") if isinstance(data, str) else data
-    #     total_size = len(lines)
-    #
-    #     def data_generator(n: int) -> str:
-    #         # Calculate how many lines to include based on the ratio n/total_size
-    #         subset_size = max(1, int(n))
-    #         subset_size = min(subset_size, total_size)  # Don't exceed available data
-    #
-    #         if isinstance(data, str):
-    #             return "\n".join(lines[:subset_size])
-    #         return lines[:subset_size]
-    #
-    #     return data_generator, total_size
     @staticmethod
-    def create_aoc_generator(data: str):
-        """Creates an optimized data generator for AOC problems with big_O analysis"""
-        lines = data.splitlines()
-        base_size = len(lines)
+    def create_data_generator(data: str):
+        """Creates an appropriate data generator based on input type"""
+        # Pre-split the lines once
+        lines = data.split("\n") if isinstance(data, str) else data
+        total_size = len(lines)
 
-        def generator(n: int) -> list:
-            # Ensure we generate meaningful test data sizes
-            size = min(max(1, int(n)), base_size)
+        def data_generator(n: int) -> str:
+            # Calculate how many lines to include based on the ratio n/total_size
+            subset_size = max(1, int(n))
+            subset_size = min(subset_size, total_size)  # Don't exceed available data
 
-            # Return data as a list for consistent handling
-            return lines[:size]
+            if isinstance(data, str):
+                return "\n".join(lines[:subset_size])
+            return lines[:subset_size]
 
-        return generator, base_size
+        return data_generator, total_size
 
     @staticmethod
     def analyze(func: Callable, data: str) -> ComplexityResult:
@@ -167,7 +153,7 @@ class Aoc:
         analyze_complexity: bool = True,
     ) -> PerformanceMetrics:
         """Run comprehensive performance analysis on a solution function"""
-            times = []
+        times = []
         start_mem = self.process.memory_info().rss
         peak_mem = start_mem
         result = None
@@ -195,8 +181,8 @@ class Aoc:
             pre_mem = self.process.memory_info().rss
 
             # Time execution
-                start = timer()
-                result = func(self.data)
+            start = timer()
+            result = func(self.data)
             end = timer()
 
             # Track memory after run
@@ -205,20 +191,20 @@ class Aoc:
 
             times.append((end - start) * 1e6)  # Convert to microseconds
 
-            end_mem = self.process.memory_info().rss
+        end_mem = self.process.memory_info().rss
         memory_used = end_mem - start_mem
         peak_memory_used = peak_mem - start_mem
 
-            return PerformanceMetrics(
-                execution_time_us=np.mean(times),
-                time_std_us=np.std(times),
+        return PerformanceMetrics(
+            execution_time_us=np.mean(times),
+            time_std_us=np.std(times),
             memory_bytes=memory_used,
             memory_peak=peak_memory_used,
-                cpu_percent=self.process.cpu_percent(),
+            cpu_percent=self.process.cpu_percent(),
             complexity=complexity_result,
-                result=result,
+            result=result,
             profile_stats=profile_stats,
-            )
+        )
 
     def print_metrics(self, metrics: PerformanceMetrics, part: str):
         """Display performance metrics in a nicely formatted table"""
@@ -323,10 +309,10 @@ class Aoc:
                     console.print(
                         f"\n[red]Cannot proceed with part {current_part} - test failed"
                     )
-                continue
+                    continue
 
                 # Run performance analysis if requested
-            if profile:
+                if profile:
                     console.rule(
                         f"[yellow]Performance Analysis - Part {current_part.upper()}"
                     )
@@ -346,10 +332,10 @@ class Aoc:
                         self.submit(result, part=current_part)
                     console.print(f"[green]✓ Part {current_part} submitted")
 
-        if readme_update:
-            with console.status("[blue]Updating README..."):
-                self.update_readme()
-            console.print("[green]✓ README updated")
+            if readme_update:
+                with console.status("[blue]Updating README..."):
+                    self.update_readme()
+                console.print("[green]✓ README updated")
 
     def submit(self, answer, part=None) -> None:
         """Submit an answer to Advent of Code"""

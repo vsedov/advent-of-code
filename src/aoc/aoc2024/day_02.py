@@ -24,7 +24,6 @@ def check_sequence(nums: np.ndarray) -> bool:
 def check_removable(nums: np.ndarray) -> bool:
     n = len(nums)
     for i in range(n):
-        # check sequence validitity by eval adjacent val - skip ith
         valid = True
         for j in range(n - 1):
             if j < i - 1:
@@ -70,4 +69,4 @@ def main(txt: str) -> None:
 
 if __name__ == "__main__":
     aoc = Aoc(day=get_day(), years=YEAR)
-    aoc.run(main, submit=True, part="both", readme_update=True)
+    aoc.run(main, submit=True, part="both", readme_update=True, profile=True)
