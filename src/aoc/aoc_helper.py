@@ -177,8 +177,8 @@ class Aoc:
         runs: int = 10,
         with_profile: bool = False,
         analyze_complexity: bool = True,
-        warmups: int = 1,
-        repeats: int = 5,
+        warmups: int = 10,
+        repeats: int = 10,
     ) -> PerformanceMetrics:
         """Run comprehensive performance analysis"""
         times = []
@@ -322,7 +322,7 @@ class Aoc:
         submit: bool = False,
         part: Union[None, str] = None,
         readme_update: bool = False,
-        profile: bool = True,
+        profile: bool = False,
         analyze_complexity: bool = False,
         warmups: int = 10,
         repeats: int = 10,
