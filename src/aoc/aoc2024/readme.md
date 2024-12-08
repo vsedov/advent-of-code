@@ -9,7 +9,7 @@
 | 05 | [Print Queue](https://adventofcode.com/2024/day/5) | ✓ | ✓ | ✓ |
 | 06 | [Guard Gallivant](https://adventofcode.com/2024/day/6) | ✓ | ✓ | ✓ |
 | 07 | [Bridge Repair](https://adventofcode.com/2024/day/7) | ✓ | ✓ | ✓ |
-| 08 | [?](https://adventofcode.com/2024/day/8) | :x: | :x: | :x: |
+| 08 | [Resonant Collinearity](https://adventofcode.com/2024/day/8) | ✓ | ✓ | ✓ |
 | 09 | [?](https://adventofcode.com/2024/day/9) | :x: | :x: | :x: |
 | 10 | [?](https://adventofcode.com/2024/day/10) | :x: | :x: | :x: |
 | 11 | [?](https://adventofcode.com/2024/day/11) | :x: | :x: | :x: |

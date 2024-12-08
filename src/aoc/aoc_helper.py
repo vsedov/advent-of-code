@@ -324,8 +324,8 @@ class Aoc:
         readme_update: bool = False,
         profile: bool = False,
         analyze_complexity: bool = False,
-        warmups: int = 10,
-        repeats: int = 10,
+        warmups: int = 1000,
+        repeats: int = 1000,
         runs: int = 1000,
     ) -> Dict[str, PerformanceMetrics]:
         """Main execution method with enhanced performance analysis options."""
