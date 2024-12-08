@@ -1,64 +1,48 @@
 from src.aoc.aoc2024 import YEAR, get_day
 from src.aoc.aoc_helper import Aoc
-import numpy as np
 from collections import defaultdict
 import itertools
 
 def parse(txt: str):
-    lines = txt.splitlines()
-    height, width = len(lines), len(lines[0])
-    scan = {}
     antennas_by_freq = defaultdict(list)
-
-    for y, line in enumerate(lines):
+    for y, line in enumerate(txt.splitlines()):
         for x, c in enumerate(line):
             if c != '.':
-                pos = x + y * 1j
-                scan[pos] = c
-                antennas_by_freq[c].append(pos)
-
-    return scan, antennas_by_freq
+                antennas_by_freq[c].append(x + y * 1j)
+    return antennas_by_freq, len(txt.splitlines()), len(txt.splitlines()[0])
 
 def part_a(txt: str) -> int:
-    scan, antennas_by_freq = parse(txt)
+    antennas_by_freq, height, width = parse(txt)
     antinode_locations = set()
 
-    for freq, antennas in antennas_by_freq.items():
+    for antennas in antennas_by_freq.values():
+        if len(antennas) < 2:
+            continue
         for a, b in itertools.combinations(antennas, 2):
             diff = a - b
-            if abs(diff) > 0:
-                antinode_locations.add(a + diff)  # Forward antinode
-                antinode_locations.add(b - diff)  # Backward antinode
+            if diff:
+                antinode_locations.add(a + diff)
+                antinode_locations.add(b - diff)
 
-    lines = txt.splitlines()
-    height, width = len(lines), len(lines[0])
-    valid_antinodes = sum(1 for pos in antinode_locations
-                         if 0 <= pos.real < width and 0 <= pos.imag < height)
-
-    return valid_antinodes
+    return sum(0 <= pos.real < width and 0 <= pos.imag < height
+              for pos in antinode_locations)
 
 def part_b(txt: str) -> int:
-    scan, antennas_by_freq = parse(txt)
-    lines = txt.splitlines()
-    height, width = len(lines), len(lines[0])
+    antennas_by_freq, height, width = parse(txt)
     max_dim = max(height, width)
     antinode_locations = set()
 
-    for freq, antennas in antennas_by_freq.items():
-        if len(antennas) >= 2:
-            antinode_locations.update(antennas)
-
+    for antennas in antennas_by_freq.values():
+        if len(antennas) < 2:
+            continue
+        antinode_locations.update(antennas)
         for a, b in itertools.combinations(antennas, 2):
-            diff = a - b
-            if abs(diff) > 0:
-                for i in range(-max_dim, max_dim + 1):
-                    antinode_locations.add(a + i * diff)
-                    antinode_locations.add(b + i * diff)
+            if diff := a - b:
+                antinode_locations.update(a + i * diff for i in range(-max_dim, max_dim + 1))
+                antinode_locations.update(b + i * diff for i in range(-max_dim, max_dim + 1))
 
-    valid_antinodes = sum(1 for pos in antinode_locations
-                         if 0 <= pos.real < width and 0 <= pos.imag < height)
-
-    return valid_antinodes
+    return sum(0 <= pos.real < width and 0 <= pos.imag < height
+              for pos in antinode_locations)
 
 def main(txt: str) -> None:
     print("part_a: ", part_a(txt))
