@@ -2,11 +2,11 @@ import cProfile
 import importlib
 import os
 import pstats
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 from timeit import default_timer as timer
-from typing import Any, Callable, Dict, Literal, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Literal, Optional, Tuple, Union
 
 import big_o
 import numpy as np
@@ -24,91 +24,70 @@ from rich.table import Table
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 console = Console()
 
-
 def format_memory(bytes_value: float) -> str:
-    """Convert bytes to human readable format with appropriate unit"""
     for unit in ["B", "KB", "MB", "GB", "TB"]:
         if bytes_value < 1024.0:
             return f"{bytes_value:.2f} {unit}"
         bytes_value /= 1024.0
     return f"{bytes_value:.2f} PB"
 
-
 @dataclass
 class PyPerfResult:
-    """Results from PyPerf benchmarking"""
-
     mean: float
     stdev: float
     median: Optional[float] = None
     min_time: Optional[float] = None
     max_time: Optional[float] = None
-    warnings: list[str] = None
+    warnings: List[str] = field(default_factory=list)
+    calibration_data: Dict[str, Any] = field(default_factory=dict)
+    benchmark_info: Dict[str, Any] = field(default_factory=dict)
 
-    def __post_init__(self):
-        if self.warnings is None:
-            self.warnings = []
+    @property
+    def coefficient_of_variation(self) -> float:
+        return 0 if self.mean == 0 else (self.stdev / self.mean) * 100
 
+    def is_stable(self, cv_threshold: float = 15.0) -> bool:
+        return self.coefficient_of_variation < cv_threshold
 
 @dataclass
 class ComplexityResult:
-    """Results from complexity analysis"""
-
     time_complexity: str
     r_squared: float
     fit_graph: Optional[Any] = None
 
-
 @dataclass
 class PerformanceMetrics:
-    """Performance metrics for a solution"""
-
-    execution_time_us: float  # Execution time in microseconds
-    time_std_us: float  # Standard deviation
-    memory_bytes: float  # Memory usage in bytes
-    memory_peak: float  # Peak memory usage in bytes
-    cpu_percent: float  # CPU usage
-    complexity: Optional[ComplexityResult] = None  # Complexity analysis results
-    pyperf_stats: Optional[PyPerfResult] = None  # PyPerf statistics
-    result: Any = None  # Solution result
-    profile_stats: Optional[pstats.Stats] = None  # Optional profiling stats
-
+    execution_time_us: float
+    time_std_us: float
+    memory_bytes: float
+    memory_peak: float
+    cpu_percent: float
+    complexity: Optional[ComplexityResult] = None
+    pyperf_stats: Optional[PyPerfResult] = None
+    result: Any = None
+    profile_stats: Optional[pstats.Stats] = None
 
 class ComplexityAnalyzer:
-    """Analyzes time complexity of functions using big_o library"""
-
     @staticmethod
     def create_data_generator(data: str):
-        """Creates an appropriate data generator based on input type"""
         lines = data.split("\n") if isinstance(data, str) else data
         total_size = len(lines)
-
         def data_generator(n: int) -> str:
             subset_size = max(1, int(n))
             subset_size = min(subset_size, total_size)
-
-            if isinstance(data, str):
-                return "\n".join(lines[:subset_size])
-            return lines[:subset_size]
-
+            return "\n".join(lines[:subset_size]) if isinstance(data, str) else lines[:subset_size]
         return data_generator, total_size
 
     @staticmethod
     def analyze(func: Callable, data: str) -> ComplexityResult:
-        """Analyze time complexity using big_o library"""
         try:
             data_generator, data_size = ComplexityAnalyzer.create_data_generator(data)
             min_n = max(2, data_size // 10)
-
             best_fit, measurements = big_o.big_o(
-                func,
-                data_generator=data_generator,
-                min_n=min_n,
-                max_n=data_size,
-                n_repeats=3,
-                n_timings=3,
+                func, data_generator=data_generator,
+                min_n=min_n, max_n=data_size,
+                n_repeats=3, n_timings=3
             )
-
             r_squared = 0.0
             if measurements:
                 try:
@@ -117,86 +96,141 @@ class ComplexityAnalyzer:
                         r_squared = np.corrcoef(ns, times)[0, 1] ** 2
                 except:
                     r_squared = 0.0
-
             return ComplexityResult(time_complexity=str(best_fit), r_squared=r_squared)
         except Exception as e:
             console.print(f"[yellow]Warning: Complexity analysis failed: {str(e)}")
-            return ComplexityResult(
-                time_complexity="Unable to determine", r_squared=0.0
-            )
-
+            return ComplexityResult(time_complexity="Unable to determine", r_squared=0.0)
 
 class Aoc:
-    def __init__(
-        self, day: int = int(datetime.now().day), years: int = int(datetime.now().year)
-    ):
+    _pyperf_runner = None
+
+    def __init__(self, day: int = int(datetime.now().day), years: int = int(datetime.now().year),
+                 benchmark_mode: str = "quick"):
         self.day = day
         self.year = years
+        self.benchmark_mode = benchmark_mode
         self.data = get_data(day=self.day, year=self.year)
-        self.test_module = importlib.import_module(
-            f"tests.aoc{self.year}.{self.year}_day_{self.day:02d}_test"
-        )
+        self.test_module = importlib.import_module(f"tests.aoc{self.year}.{self.year}_day_{self.day:02d}_test")
         self.process = psutil.Process()
-        # Initialize single pyperf runner instance
-        self.pyperf_runner = pyperf.Runner(processes=1, program_args=["--quiet"])
 
-    def run_pyperf_analysis(
-        self, func: Callable, warmups: int = 5, repeats: int = 15
-    ) -> Optional[PyPerfResult]:
-        """Run detailed PyPerf timing analysis."""
+    @property
+    def pyperf_runner(self):
+        if Aoc._pyperf_runner is None:
+            is_jit = pyperf.python_has_jit()
+
+            if self.benchmark_mode == "quick":
+                processes = 3
+                warmups = 10
+            elif self.benchmark_mode == "normal":
+                processes = 6 if is_jit else 12
+                warmups = 100
+            else:  # accurate mode
+                processes = 6 if is_jit else 20
+                warmups = 1000
+
+            Aoc._pyperf_runner = pyperf.Runner(
+                processes=processes,
+                warmups=warmups,
+                values=3,
+                min_time=0.1,
+                show_name=True
+            )
+        return Aoc._pyperf_runner
+
+    def run_pyperf_analysis(self, func: Callable, warmups: int = 1000, repeats: int = 1000) -> Optional[PyPerfResult]:
         try:
+            print("\nStarting PyPerf analysis...")
+
+            # Configure runner for this specific benchmark
+            self.pyperf_runner.args = None  # Reset args before new benchmark
+            self.pyperf_runner.args = self.pyperf_runner.parse_args([
+                '--worker',
+                '--values', str(repeats),
+                '--warmups', str(warmups),
+                '--loops', '1000',  # Let PyPerf calibrate
+                '--rigorous',
+                '--processes', '30',
+            ])
+
+            # Run benchmark
             benchmark = self.pyperf_runner.bench_func(
-                func.__name__, lambda: func(self.data), warmups=warmups, loops=repeats
+                func.__name__,
+                lambda: func(self.data)
             )
 
-            # Extract all core statistics
-            mean = benchmark.mean()
-            stdev = benchmark.stdev()
-
-            # Get additional statistics if available
-            stats = benchmark.get_stats()
-            warnings = []
-
-            # Check for benchmark stability
-            if stdev > mean * 0.15:  # If stdev is more than 15% of mean
-                warnings.append(
-                    f"WARNING: the benchmark result may be unstable\n"
-                    f"* the standard deviation ({stdev*1e6:.0f} us) is {stdev/mean*100:.0f}% of the mean ({mean*1e3:.2f} ms)\n"
-                    f"\nTry to rerun the benchmark with more runs, values and/or loops.\n"
-                    f"Run 'python -m pyperf system tune' command to reduce the system jitter.\n"
-                    f"Use pyperf stats, pyperf dump and pyperf hist to analyze results."
+            if benchmark is None:
+                return PyPerfResult(
+                    mean=0.0,
+                    stdev=0.0,
+                    warnings=["Benchmark run failed and returned None"]
                 )
 
-            return PyPerfResult(mean=mean, stdev=stdev, warnings=warnings)
-        except Exception as e:
-            return None
+            # Extract values and compute statistics
+            values = benchmark.get_values()
+            if not values:
+                return PyPerfResult(
+                    mean=0.0,
+                    stdev=0.0,
+                    warnings=["No values recorded in benchmark"]
+                )
 
-    def analyze_performance(
-        self,
-        func: Callable,
-        runs: int = 10,
-        with_profile: bool = False,
-        analyze_complexity: bool = True,
-        warmups: int = 10,
-        repeats: int = 10,
-    ) -> PerformanceMetrics:
-        """Run comprehensive performance analysis"""
+            # Calculate statistics
+            result = PyPerfResult(
+                mean=benchmark.mean(),
+                stdev=benchmark.stdev() if len(values) > 1 else 0.0,
+                median=np.median(values),
+                min_time=min(values),
+                max_time=max(values),
+                calibration_data={
+                    'total_loops': len(values),
+                    'inner_loops': 1,
+                    'total_runtime': sum(values)
+                },
+                benchmark_info={
+                    'name': func.__name__,
+                    'samples': len(values),
+                }
+            )
+
+            # Analyze results
+            warnings = []
+            cv = result.coefficient_of_variation
+            if cv > 15.0:
+                warnings.append(f"High variability (CV={cv:.1f}%)")
+
+            if len(values) >= 4:  # Only check outliers if we have enough samples
+                q1, q3 = np.percentile(values, [25, 75])
+                iqr = q3 - q1
+                outliers = [x for x in values if x < (q1 - 1.5 * iqr) or x > (q3 + 1.5 * iqr)]
+                if outliers:
+                    warnings.append(f"Found {len(outliers)} outliers")
+
+            if result.calibration_data['total_runtime'] < 1.0:
+                warnings.append("Short runtime")
+
+            result.warnings = warnings
+            return result
+
+        except Exception as e:
+            error_msg = f"PyPerf analysis failed: {str(e)}"
+            print(f"\n[red]Error: {error_msg}[/red]")
+            import traceback
+            traceback.print_exc()
+            return PyPerfResult(mean=0.0, stdev=0.0, warnings=[error_msg])
+
+    def analyze_performance(self, func: Callable, runs: int = 100, with_profile: bool = False,
+                          analyze_complexity: bool = True, warmups: int = 5000, repeats: int = 10000) -> PerformanceMetrics:
         times = []
         start_mem = self.process.memory_info().rss
         peak_mem = start_mem
         result = None
         profile_stats = None
         complexity_result = None
-        pyperf_result = None
-
-        # Run PyPerf analysis first
         pyperf_result = self.run_pyperf_analysis(func, warmups, repeats)
 
-        # Analyze complexity if requested
         if analyze_complexity:
             complexity_result = ComplexityAnalyzer.analyze(func, self.data)
 
-        # Profiling run if requested
         if with_profile:
             profiler = cProfile.Profile()
             profiler.enable()
@@ -204,19 +238,16 @@ class Aoc:
             profiler.disable()
             profile_stats = pstats.Stats(profiler)
 
-        # Basic performance measurement runs
-        for _ in track(range(runs), description="Running performance analysis..."):
+        for _ in track(range(50), description="Running performance analysis..."):
             if hasattr(func, "cache"):
                 func.cache.clear()
-
             pre_mem = self.process.memory_info().rss
             start = timer()
             result = func(self.data)
             end = timer()
             post_mem = self.process.memory_info().rss
             peak_mem = max(peak_mem, post_mem)
-
-            times.append((end - start) * 1e6)  # Convert to microseconds
+            times.append((end - start) * 1e6)
 
         end_mem = self.process.memory_info().rss
         memory_used = end_mem - start_mem
@@ -231,80 +262,62 @@ class Aoc:
             complexity=complexity_result,
             pyperf_stats=pyperf_result,
             result=result,
-            profile_stats=profile_stats,
+            profile_stats=profile_stats
         )
 
     def print_metrics(self, metrics: PerformanceMetrics, part: str):
-        """Display performance metrics in a nicely formatted table"""
-
         def format_time(t: float) -> str:
-            if t < 0.000001:
-                return f"{t*1e9:.1f}ns"
-            if t < 0.001:
-                return f"{t*1e6:.1f}µs"
-            if t < 1:
-                return f"{t*1000:.1f}ms"
+            if t < 0.000001: return f"{t*1e9:.1f}ns"
+            if t < 0.001: return f"{t*1e6:.1f}µs"
+            if t < 1: return f"{t*1000:.1f}ms"
             return f"{t:.2f}s"
 
-        # Create metrics table with rounded box style
         table = Table(box=box.ROUNDED, title=f"Part {part.upper()} Analysis")
         table.add_column("Metric", style="cyan")
         table.add_column("Value", style="green")
-
-        # Add result first
         table.add_row("Result", str(metrics.result))
-
-        # Add timing metrics from basic measurement
         table.add_row(
             "Execution Time",
-            f"{format_time(metrics.execution_time_us/1e6)} ± {format_time(metrics.time_std_us/1e6)}",
+            f"{format_time(metrics.execution_time_us/1e6)} ± {format_time(metrics.time_std_us/1e6)}"
         )
-
-        # Add memory metrics
         if metrics.memory_bytes > 0:
             table.add_row("Memory Usage", format_memory(metrics.memory_bytes))
         if metrics.memory_peak > 0:
             table.add_row("Peak Memory", format_memory(metrics.memory_peak))
-
         if metrics.cpu_percent > 0:
             table.add_row("CPU Usage", f"{metrics.cpu_percent:.1f}%")
-
-        # Add complexity information if available
         if metrics.complexity:
             table.add_row(
                 "Time Complexity",
-                f"{metrics.complexity.time_complexity} (R² = {metrics.complexity.r_squared:.3f})",
+                f"{metrics.complexity.time_complexity} (R² = {metrics.complexity.r_squared:.3f})"
             )
-
         console.print(table)
 
-        # Print profile stats if available
         if metrics.profile_stats:
             console.print("\n[bold cyan]Profile Details:[/bold cyan]")
             console.print("[dim]Top 10 functions by cumulative time:[/dim]")
             metrics.profile_stats.sort_stats("cumulative").print_stats(10)
 
-        # Print PyPerf results if available
         if metrics.pyperf_stats:
-            # Print any warnings from PyPerf
             if metrics.pyperf_stats.warnings:
+                console.print("\n[yellow]PyPerf Warnings:[/yellow]")
                 for warning in metrics.pyperf_stats.warnings:
-                    console.print(f"\n{warning}")
+                    console.print(f"⚠️  {warning}")
 
-            # Print the PyPerf mean and standard deviation
-            console.print(
-                f"\npart_{part}: Mean +- std dev: "
-                f"{metrics.pyperf_stats.mean*1e6:.0f} us +- "
-                f"{metrics.pyperf_stats.stdev*1e6:.0f} us"
-            )
+            stats = metrics.pyperf_stats
+            console.print(f"\n[cyan]PyPerf Statistics:[/cyan]")
+            console.print(f"Mean: {stats.mean*1e6:.0f} µs")
+            console.print(f"Std Dev: ±{stats.stdev*1e6:.0f} µs")
+            if stats.median:
+                console.print(f"Median: {stats.median*1e6:.0f} µs")
+            if stats.calibration_data:
+                console.print(f"Runtime: {stats.calibration_data['total_runtime']:.2f}s")
 
     def run_test(self, part: Literal["a", "b"]) -> bool:
-        """Run test for a specific part"""
         test_func = getattr(self.test_module, f"test_{part}", None)
         if not test_func:
             console.print(f"[red]✗ No test found for part {part}")
             return False
-
         try:
             test_func()
             console.print(f"[green]✓ Part {part} test passed")
@@ -316,111 +329,21 @@ class Aoc:
             console.print(f"[red]✗ Error in part {part} test: {str(e)}")
             return False
 
-    def run(
-        self,
-        func=None,
-        submit: bool = False,
-        part: Union[None, str] = None,
-        readme_update: bool = False,
-        profile: bool = False,
-        analyze_complexity: bool = False,
-        warmups: int = 1000,
-        repeats: int = 1000,
-        runs: int = 1000,
-    ) -> Dict[str, PerformanceMetrics]:
-        """Main execution method with enhanced performance analysis options."""
-        console.rule(f"[bold blue]Advent of Code {self.year} - Day {self.day}")
-        metrics = {}
-
-        # Run custom function if provided
-        if func is not None:
-            with console.status("[cyan]Running main function..."):
-                func(self.get_data())
-
-        # Import solution module
-        modules = importlib.import_module(f"src.aoc.aoc{self.year}.day_{self.day:02d}")
-
-        # Determine which parts to run
-        parts_to_run = []
-        if part == "a" or part == "both":
-            parts_to_run.append("a")
-        if part == "b" or part == "both":
-            parts_to_run.append("b")
-
-        # Run tests first and collect results
-        test_results = {}
-        console.print("\n[cyan]Running Tests:")
-        for part_name in parts_to_run:
-            test_results[part_name] = self.run_test(part_name)
-
-        # Process each part
-        for part_name in parts_to_run:
-            console.rule(f"[yellow]Part {part_name.upper()}")
-            part_func = getattr(modules, f"part_{part_name}")
-
-            # Run performance analysis if requested
-            if profile:
-                metrics[part_name] = self.analyze_performance(
-                    part_func,
-                    runs=runs,
-                    warmups=warmups,
-                    repeats=repeats,
-                    analyze_complexity=analyze_complexity,
-                    with_profile=True,
-                )
-                self.print_metrics(metrics[part_name], part_name)
-
-            # Handle submission
-            if test_results[part_name] and submit:
-                with console.status(f"[green]Submitting part {part_name}..."):
-                    try:
-                        result = (
-                            metrics[part_name].result
-                            if profile
-                            else part_func(self.data)
-                        )
-                        self.submit(result, part=part_name)
-                        console.print(
-                            f"[green]✓ Part {part_name} submitted successfully"
-                        )
-                    except Exception as e:
-                        console.print(f"[red]✗ Submission failed: {str(e)}")
-            elif submit and not test_results[part_name]:
-                console.print(
-                    f"[red]Skipping submission for part {part_name} - tests failed"
-                )
-
-        # Update README if requested
-        if readme_update:
-            with console.status("[blue]Updating README..."):
-                self.update_readme()
-            console.print("[green]✓ README updated")
-
-        return metrics
-
     def submit(self, answer, part=None) -> None:
-        """Submit an answer to Advent of Code."""
         submit(answer, part=part, day=self.day, year=self.year)
 
     def get_data(self) -> str:
-        """Get the input data for the current day."""
         return self.data
 
     def run_all_tests(self) -> None:
-        """Run all tests using pytest."""
         import pytest
-
-        pytest.main(
-            [f"tests/aoc{self.year}/{self.year}_day_{self.day:02d}_test.py", "-v"]
-        )
+        pytest.main([f"tests/aoc{self.year}/{self.year}_day_{self.day:02d}_test.py", "-v"])
 
     def get_problem_name(self) -> str:
-        """Get the title of the current day's problem."""
         puzzle = Puzzle(year=self.year, day=self.day)
         return puzzle.title
 
     def update_readme(self) -> None:
-        """Update the README with current progress."""
         readme_dir = os.path.join(PROJECT_ROOT, f"src/aoc/aoc{self.year}")
         readme_path = os.path.join(readme_dir, "readme.md")
         os.makedirs(readme_dir, exist_ok=True)
@@ -437,9 +360,7 @@ class Aoc:
         try:
             with open(readme_path, "r") as f:
                 lines = f.readlines()
-                if not any(
-                    "| Day | Problem | Part A | Part B |" in line for line in lines
-                ):
+                if not any("| Day | Problem | Part A | Part B |" in line for line in lines):
                     lines = table_headers + [create_row(i) for i in range(1, 26)]
         except FileNotFoundError:
             lines = table_headers + [create_row(i) for i in range(1, 26)]
@@ -451,7 +372,6 @@ class Aoc:
                     part_a_passed = self.run_test("a")
                     part_b_passed = self.run_test("b")
                     completed = part_a_passed and part_b_passed
-
                     new_line = (
                         f"| {self.day:02d} | "
                         f"[{self.get_problem_name()}](https://adventofcode.com/{self.year}/day/{day_str}) | "
@@ -463,12 +383,64 @@ class Aoc:
                     break
             f.writelines(lines)
 
+    def run(self, func=None, submit: bool = False, part: Union[None, str] = None,
+            readme_update: bool = False, profile: bool = False, analyze_complexity: bool = False,
+            warmups: int =10, repeats: int =10, runs: int =10) -> Dict[str, PerformanceMetrics]:
+        console.rule(f"[bold blue]Advent of Code {self.year} - Day {self.day}")
+        metrics = {}
+
+        if func is not None:
+            with console.status("[cyan]Running main function..."):
+                func(self.get_data())
+
+        modules = importlib.import_module(f"src.aoc.aoc{self.year}.day_{self.day:02d}")
+
+        parts_to_run = []
+        if part == "a" or part == "both":
+            parts_to_run.append("a")
+        if part == "b" or part == "both":
+            parts_to_run.append("b")
+
+        test_results = {}
+        console.print("\n[cyan]Running Tests:")
+        for part_name in parts_to_run:
+            test_results[part_name] = self.run_test(part_name)
+
+        for part_name in parts_to_run:
+            console.rule(f"[yellow]Part {part_name.upper()}")
+            part_func = getattr(modules, f"part_{part_name}")
+
+            if profile:
+                metrics[part_name] = self.analyze_performance(
+                    part_func,
+                    runs=runs,
+                    warmups=warmups,
+                    repeats=repeats,
+                    analyze_complexity=analyze_complexity,
+                    with_profile=True
+                )
+                self.print_metrics(metrics[part_name], part_name)
+
+            if test_results[part_name] and submit:
+                with console.status(f"[green]Submitting part {part_name}..."):
+                    try:
+                        result = metrics[part_name].result if profile else part_func(self.data)
+                        self.submit(result, part=part_name)
+                        console.print(f"[green]✓ Part {part_name} submitted successfully")
+                    except Exception as e:
+                        console.print(f"[red]✗ Submission failed: {str(e)}")
+            elif submit and not test_results[part_name]:
+                console.print(f"[red]Skipping submission for part {part_name} - tests failed")
+
+        if readme_update:
+            with console.status("[blue]Updating README..."):
+                self.update_readme()
+            console.print("[green]✓ README updated")
+
+        return metrics
 
 if __name__ == "__main__":
-    # Example usage
     aoc = Aoc(day=1, years=2023)
-
-    # Run with all analysis features
     metrics = aoc.run(
         part="both",
         profile=True,
@@ -477,5 +449,5 @@ if __name__ == "__main__":
         repeats=5,
         runs=100,
         submit=False,
-        readme_update=True,
+        readme_update=True
     )
